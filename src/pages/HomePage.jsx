@@ -3,7 +3,7 @@ import "../styles/glass.css";
 
 export default function HomePage() {
   return (
-    <div className="glass-page min-h-[100dvh] bg-base-200">
+    <div className="glass-page min-h-[100dvh]">
       <div className="mx-auto w-full px-4 py-6 md:max-w-4xl md:px-8 md:py-10">
 
 
