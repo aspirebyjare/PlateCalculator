@@ -1,4 +1,7 @@
 import { useState } from "react";
+import BarbellVisualization from "./BarbellVisualization";
+import Toggle from "./Toggle";
+import "../styles/glass.css";
 
 export default function PlateCalculator() {
   const [barUnit, setBarUnit] = useState("lb");
@@ -39,14 +42,14 @@ export default function PlateCalculator() {
   const total = Math.round((barLb + platesLb) * 100) / 100;
 
   return (
-    <div className="card border border-base-300 bg-base-100 shadow-sm">
-      <div className="card-body p-4">
+    <div className="glass-panel card rounded-[2rem] border-0 bg-base-100/40 shadow-none">
+      <div className="card-body p-5 md:p-6">
 
         {/* Display */}
-        <div className="bg-base-200 rounded-box p-4">
-          <div className="text-xs opacity-60 text-right">Bar {bar.weight} {bar.unit}</div>
+        <div className="glass-subpanel rounded-[1.5rem] p-5 md:p-6">
+          <div className="glass-label text-[11px] text-right">Bar {bar.weight} {bar.unit}</div>
 
-          <div className="text-3xl font-bold tracking-tight text-right">
+          <div className="mt-1 text-4xl font-bold tracking-tight text-right md:text-5xl">
             {displayUnit === "lb"
               ? `${total} lb`
               : `${Math.round(lbToKg(total) * 100) / 100} kg`}
@@ -54,26 +57,17 @@ export default function PlateCalculator() {
 
           {/* Result Unit Toggle */}
           <div className="flex justify-end mt-2">
-            <div className="join">
-              <button
-                className={`btn btn-xs join-item ${displayUnit === "lb" ? "btn-primary" : "btn-outline"}`}
-                onClick={() => setDisplayUnit("lb")}
-              >
-                LB
-              </button>
-              <button
-                className={`btn btn-xs join-item ${displayUnit === "kg" ? "btn-primary" : "btn-outline"}`}
-                onClick={() => setDisplayUnit("kg")}
-              >
-                KG
-              </button>
-            </div>
+            <Toggle
+              options={["lb", "kg"]}
+              value={displayUnit}
+              onChange={setDisplayUnit}
+            />
           </div>
         </div>
 
         <div className="flex justify-end gap-2 mt-3">
           <button
-            className="btn btn-sm btn-ghost"
+            className="glass-pill btn btn-sm border-0 bg-transparent shadow-none text-white/90"
             onClick={clear}
             disabled={plates.length === 0}
           >
@@ -84,27 +78,22 @@ export default function PlateCalculator() {
         {/* Bar Section */}
         <div className="mt-4">
           <div className="flex justify-between items-center mb-1">
-            <div className="text-xs opacity-60">Bar</div>
-            <div className="join">
-              <button
-                className={`btn btn-xs join-item ${barUnit === "lb" ? "btn-primary" : "btn-outline"}`}
-                onClick={() => setBarUnit("lb")}
-              >
-                LB
-              </button>
-              <button
-                className={`btn btn-xs join-item ${barUnit === "kg" ? "btn-primary" : "btn-outline"}`}
-                onClick={() => setBarUnit("kg")}
-              >
-                KG
-              </button>
-            </div>
+            <div className="glass-label text-xs font-semibold tracking-wide text-base-content/80">Bar</div>
+            <Toggle
+              options={["lb", "kg"]}
+              value={barUnit}
+              onChange={setBarUnit}
+            />
           </div>
           <div className="grid grid-cols-4 gap-2">
             {barSet.map((w) => (
               <button
                 key={w}
-                className={`btn btn-sm ${bar.weight === w && bar.unit === barUnit ? "btn-secondary" : "btn-outline"}`}
+                className={`glass-pill btn btn-sm border shadow-none transition-all ${
+                  bar.weight === w && bar.unit === barUnit
+                    ? "border-white/40 bg-white/10 text-white shadow-[0_10px_24px_rgba(15,23,42,0.18)] hover:bg-white/10"
+                    : "border-transparent"
+                }`}
                 onClick={() => setBar({ weight: w, unit: barUnit })}
               >
                 {w} {barUnit}
@@ -116,27 +105,18 @@ export default function PlateCalculator() {
         {/* Plates Section */}
         <div className="mt-4">
           <div className="flex justify-between items-center mb-1">
-            <div className="text-xs opacity-60">Plates (per side)</div>
-            <div className="join">
-              <button
-                className={`btn btn-xs join-item ${plateUnit === "lb" ? "btn-primary" : "btn-outline"}`}
-                onClick={() => setPlateUnit("lb")}
-              >
-                LB
-              </button>
-              <button
-                className={`btn btn-xs join-item ${plateUnit === "kg" ? "btn-primary" : "btn-outline"}`}
-                onClick={() => setPlateUnit("kg")}
-              >
-                KG
-              </button>
-            </div>
+            <div className="glass-label text-xs font-semibold tracking-wide text-base-content/80">Plates (per side)</div>
+            <Toggle
+              options={["lb", "kg"]}
+              value={plateUnit} 
+              onChange={setPlateUnit}
+            />
           </div>
           <div className="grid grid-cols-4 gap-2">
             {plateSet.map((p) => (
               <button
                 key={p}
-                className="btn btn-outline"
+                className="glass-token btn border-0 bg-transparent shadow-none w-20 h-20 rounded-full flex items-center justify-center text-sm font-semibold"
                 onClick={() => addPlate(p)}
               >
                 {p} {plateUnit}
@@ -145,55 +125,11 @@ export default function PlateCalculator() {
           </div>
         </div>
 
-        {/* Plate Visualization */}
-        <div className="mt-4 flex flex-col items-center gap-2">
-
-          {/* Bar Label */}
-          <div className="text-xs opacity-60">
-            {bar.weight} {bar.unit}
-          </div>
-
-          <div className="flex justify-center items-center gap-2">
-
-            {/* Left Side Plates */}
-            <div className="flex items-center gap-1">
-              {[...plates]
-                .map((p, index) => ({ ...p, originalIndex: index }))
-                .reverse()
-                .map((p, i) => (
-                  <button
-                    key={`L-${i}`}
-                    type="button"
-                    className="badge badge-outline cursor-pointer hover:badge-primary"
-                    onClick={() => removePlateAtIndex(p.originalIndex)}
-                    title="Remove plate"
-                  >
-                    {p.weight} {p.unit}
-                  </button>
-                ))}
-            </div>
-
-            {/* Bar */}
-            <div className="w-16 h-1 bg-base-content opacity-40 rounded" />
-
-            {/* Right Side Plates */}
-            <div className="flex items-center gap-1">
-              {plates.map((p, i) => (
-                <button
-                  key={`R-${i}`}
-                  type="button"
-                  className="badge badge-outline cursor-pointer hover:badge-primary"
-                  onClick={() => removePlateAtIndex(i)}
-                  title="Remove plate"
-                >
-                  {p.weight} {p.unit}
-                </button>
-              ))}
-            </div>
-
-          </div>
-
-        </div>
+        <BarbellVisualization
+          bar={bar}
+          plates={plates}
+          onRemovePlate={removePlateAtIndex}
+        />
 
       </div>
     </div>
