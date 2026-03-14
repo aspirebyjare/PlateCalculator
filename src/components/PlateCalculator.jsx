@@ -22,6 +22,10 @@ export default function PlateCalculator() {
 
   const clear = () => setPlates([]);
 
+  const removePlateAtIndex = (indexToRemove) => {
+    setPlates((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
+
   const kgToLb = (kg) => kg * 2.20462;
   const lbToKg = (lb) => lb / 2.20462;
 
@@ -67,8 +71,12 @@ export default function PlateCalculator() {
           </div>
         </div>
 
-        <div className="flex justify-end mt-3">
-          <button className="btn btn-sm btn-ghost" onClick={clear}>
+        <div className="flex justify-end gap-2 mt-3">
+          <button
+            className="btn btn-sm btn-ghost"
+            onClick={clear}
+            disabled={plates.length === 0}
+          >
             Clear
           </button>
         </div>
@@ -149,11 +157,20 @@ export default function PlateCalculator() {
 
             {/* Left Side Plates */}
             <div className="flex items-center gap-1">
-              {[...plates].reverse().map((p, i) => (
-                <div key={`L-${i}`} className="badge badge-outline">
-                  {p.weight} {p.unit}
-                </div>
-              ))}
+              {[...plates]
+                .map((p, index) => ({ ...p, originalIndex: index }))
+                .reverse()
+                .map((p, i) => (
+                  <button
+                    key={`L-${i}`}
+                    type="button"
+                    className="badge badge-outline cursor-pointer hover:badge-primary"
+                    onClick={() => removePlateAtIndex(p.originalIndex)}
+                    title="Remove plate"
+                  >
+                    {p.weight} {p.unit}
+                  </button>
+                ))}
             </div>
 
             {/* Bar */}
@@ -162,9 +179,15 @@ export default function PlateCalculator() {
             {/* Right Side Plates */}
             <div className="flex items-center gap-1">
               {plates.map((p, i) => (
-                <div key={`R-${i}`} className="badge badge-outline">
+                <button
+                  key={`R-${i}`}
+                  type="button"
+                  className="badge badge-outline cursor-pointer hover:badge-primary"
+                  onClick={() => removePlateAtIndex(i)}
+                  title="Remove plate"
+                >
                   {p.weight} {p.unit}
-                </div>
+                </button>
               ))}
             </div>
 
