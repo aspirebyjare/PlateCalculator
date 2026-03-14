@@ -67,7 +67,7 @@ export default function PlateCalculator() {
 
         <div className="flex justify-end gap-2 mt-3">
           <button
-            className="glass-pill btn btn-sm border-0 bg-transparent shadow-none text-white/90"
+            className="glass-pill btn btn-sm border-0 bg-transparent shadow-none text-white disabled:text-white disabled:opacity-100"
             onClick={clear}
             disabled={plates.length === 0}
           >
