@@ -4,7 +4,7 @@ import "../styles/glass.css";
 export default function HomePage() {
   return (
     <div className="glass-page min-h-[100dvh] bg-base-200">
-      <div className="mx-auto max-w-4xl px-6 py-8 md:px-8 md:py-10">
+      <div className="mx-auto w-full px-4 py-6 md:max-w-4xl md:px-8 md:py-10">
 
 
         <div className="mt-6 md:mt-8">
